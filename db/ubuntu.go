@@ -3,7 +3,6 @@ package db
 import (
 	"errors"
 
-	pb "github.com/cheggaaa/pb/v3"
 	"github.com/spf13/viper"
 	"github.com/vulsio/gost/models"
 	"golang.org/x/xerrors"
@@ -80,7 +79,6 @@ func (r *RDBDriver) InsertUbuntu(cves []models.UbuntuCVE) (err error) {
 }
 
 func (r *RDBDriver) deleteAndInsertUbuntu(cves []models.UbuntuCVE) (err error) {
-	bar := pb.StartNew(len(cves))
 	tx := r.conn.Begin()
 
 	defer func() {
@@ -126,9 +124,7 @@ func (r *RDBDriver) deleteAndInsertUbuntu(cves []models.UbuntuCVE) (err error) {
 		if err = tx.Create(cves[idx.From:idx.To]).Error; err != nil {
 			return xerrors.Errorf("Failed to insert. err: %w", err)
 		}
-		bar.Add(idx.To - idx.From)
 	}
-	bar.Finish()
 
 	return nil
 }
